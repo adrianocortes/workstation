@@ -22,6 +22,39 @@ Instalador automático da IDE Arduino com funcionalidades avançadas.
 - ✅ Configuração de permissões USB
 - ✅ Criação de atalho no menu
 - ✅ Atualização automática se já existir
+
+### install_cursor_ide.sh
+Instalador e atualizador do Cursor IDE (Editor de código com IA).
+
+#### Uso Direto
+```bash
+# Instalar/Atualizar Cursor IDE
+./install_cursor_ide.sh
+
+# Forçar instalação inicial
+./install_cursor_ide.sh --install
+
+# Forçar atualização
+./install_cursor_ide.sh --update
+
+# Ver status da instalação
+./install_cursor_ide.sh --status
+
+# Desinstalar Cursor IDE
+./install_cursor_ide.sh --uninstall
+```
+
+#### Funcionalidades
+- ✅ Download automático da versão mais recente via API oficial
+- ✅ Instalação em /opt/cursor (sistema)
+- ✅ Permissões configuradas para todos os usuários
+- ✅ Criação de atalho no menu de aplicativos
+- ✅ Download automático do ícone
+- ✅ Configuração de PATH do sistema
+- ✅ Comando 'cursor' disponível no terminal
+- ✅ Atualização automática se já existir
+- ✅ Opção de desinstalação completa
+- ✅ Verificação de dependências (curl, jq)
 - ✅ Verificação de dependências
 - ✅ Tratamento de erros robusto
 
@@ -54,7 +87,8 @@ Instalador e configurador do Zsh + Oh My Zsh.
 - ✅ Instalação do Zsh
 - ✅ Instalação do Oh My Zsh
 - ✅ Tema: jonathan
-- ✅ Plugins: git, kubectl, terraform, azure, ansible, helm, etc.
+- ✅ Plugins: git, kubectl, terraform, azure, ansible, helm, kube-ps1, etc.
+- ✅ Instalação automática de plugins externos (zsh-autosuggestions, kube-ps1)
 - ✅ Idioma: pt_BR.UTF-8
 - ✅ Configurações do kubectx
 - ✅ Aliases e funções úteis

@@ -15,6 +15,7 @@ Execute o menu principal para acessar as opções disponíveis:
 - **Ubuntu Desktop**: Scripts e configurações para desktops Ubuntu
   - [📋 Documentação Ubuntu Desktop](linux/Ubuntu/Desktop/README.md)
   - [🔧 Instalador Arduino IDE](linux/Ubuntu/Desktop/scripts/install_arduino_ide.sh)
+  - [🔧 Instalador Cursor IDE](linux/Ubuntu/Desktop/scripts/install_cursor_ide.sh)
   - [🔧 Ambiente de Terminal Completo](linux/Ubuntu/Desktop/scripts/install_all_terminal_environment.sh)
   - [🔧 Instalador k9s](linux/Ubuntu/Desktop/scripts/install_k9s.sh)
   - [🔧 Scripts Modulares de Terminal](linux/Ubuntu/Desktop/scripts/README.md)
@@ -36,6 +37,7 @@ workstation/
 │       └── Desktop/           # Configurações Ubuntu Desktop
 │           ├── scripts/       # Scripts modulares
 │           │   ├── install_arduino_ide.sh
+│           │   ├── install_cursor_ide.sh
 │           │   ├── install_terminator.sh
 │           │   ├── install_ohmyzsh.sh
 │           │   ├── install_kubernetes_tools.sh

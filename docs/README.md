@@ -20,6 +20,7 @@ workstation/
 - **Ubuntu Server**: Configurações e scripts para servidores Ubuntu
 - **Ubuntu Desktop**: Configurações e scripts para desktops Ubuntu
   - **Arduino IDE**: Instalador automático com configurações avançadas
+  - **Cursor IDE**: Instalador automático do editor de código com IA
   - **Ambiente de Terminal**: Scripts modulares para configuração completa
     - Terminator (terminal padrão)
     - Zsh + Oh My Zsh (shell avançado)

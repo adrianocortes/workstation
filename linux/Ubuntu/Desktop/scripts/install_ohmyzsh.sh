@@ -68,6 +68,8 @@ command -v git >/dev/null 2>&1 || {
     sudo apt update && sudo apt install -y git;
 }
 
+# fzf removido - não é mais necessário sem zsh-interactive-cd
+
 # Instalar Zsh
 if ! command -v zsh >/dev/null 2>&1; then
     log "Instalando Zsh..."
@@ -124,7 +126,6 @@ ZSH_THEME="jonathan"
 # Plugins (configuráveis no início do script)
 plugins=(
     git
-    zsh-interactive-cd
     kube-ps1
     sudo
     kubectl

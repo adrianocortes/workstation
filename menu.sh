@@ -52,14 +52,15 @@ show_ubuntu_desktop_menu() {
     echo -e "${PURPLE}┌─ UBUNTU DESKTOP - OPÇÕES DISPONÍVEIS ─────────────────────┐${NC}"
     echo -e "${PURPLE}│                                                          │${NC}"
     echo -e "${PURPLE}│  ${GREEN}1)${NC} Instalar Arduino IDE                              ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}2)${NC} Ambiente de Terminal Completo                     ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}3)${NC} Instalar Terminator                               ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}4)${NC} Instalar Zsh + Oh My Zsh                         ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}5)${NC} Instalar Ferramentas Kubernetes                   ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}6)${NC} Instalar k9s (Terminal UI para Kubernetes)        ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}7)${NC} Ver Scripts Disponíveis                           ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}8)${NC} Ver Configurações Disponíveis                     ${PURPLE}│${NC}"
-    echo -e "${PURPLE}│  ${GREEN}9)${NC} Ver Documentação Ubuntu Desktop                   ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}2)${NC} Instalar Cursor IDE                               ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}3)${NC} Ambiente de Terminal Completo                     ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}4)${NC} Instalar Terminator                               ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}5)${NC} Instalar Zsh + Oh My Zsh                         ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}6)${NC} Instalar Ferramentas Kubernetes                   ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}7)${NC} Instalar k9s (Terminal UI para Kubernetes)        ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}8)${NC} Ver Scripts Disponíveis                           ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}9)${NC} Ver Configurações Disponíveis                     ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│  ${GREEN}10)${NC} Ver Documentação Ubuntu Desktop                  ${PURPLE}│${NC}"
     echo -e "${PURPLE}│  ${GREEN}0)${NC} Voltar ao Menu Principal                         ${PURPLE}│${NC}"
     echo -e "${PURPLE}│                                                          │${NC}"
     echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${NC}"
@@ -299,34 +300,37 @@ ubuntu_desktop_menu() {
         echo -e "${CYAN}Escolha uma opção: ${NC}"
         read -r choice
 
-        case $choice in
-            1)
-                install_arduino_ide
-                ;;
-            2)
-                run_terminal_script "install_all_terminal_environment.sh"
-                ;;
-            3)
-                run_terminal_script "install_terminator.sh"
-                ;;
-            4)
-                run_terminal_script "install_ohmyzsh.sh"
-                ;;
-            5)
-                run_terminal_script "install_kubernetes_tools.sh"
-                ;;
-            6)
-                run_terminal_script "install_k9s.sh"
-                ;;
-            7)
-                list_scripts "Ubuntu Desktop"
-                ;;
-            8)
-                list_configs "Ubuntu Desktop"
-                ;;
-            9)
-                show_documentation "Ubuntu Desktop"
-                ;;
+            case $choice in
+                1)
+                    install_arduino_ide
+                    ;;
+                2)
+                    run_terminal_script "install_cursor_ide.sh"
+                    ;;
+                3)
+                    run_terminal_script "install_all_terminal_environment.sh"
+                    ;;
+                4)
+                    run_terminal_script "install_terminator.sh"
+                    ;;
+                5)
+                    run_terminal_script "install_ohmyzsh.sh"
+                    ;;
+                6)
+                    run_terminal_script "install_kubernetes_tools.sh"
+                    ;;
+                7)
+                    run_terminal_script "install_k9s.sh"
+                    ;;
+                8)
+                    list_scripts "Ubuntu Desktop"
+                    ;;
+                9)
+                    list_configs "Ubuntu Desktop"
+                    ;;
+                10)
+                    show_documentation "Ubuntu Desktop"
+                    ;;
             0)
                 return
                 ;;

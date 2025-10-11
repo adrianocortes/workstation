@@ -25,6 +25,16 @@ Desktop/
   - Opção de desinstalação
   - [🔧 Executar Script](scripts/install_arduino_ide.sh)
 
+- **Cursor IDE**: Instalador automático do editor de código com IA
+  - Download da versão mais recente via API oficial
+  - Instalação em /opt/cursor (sistema)
+  - Permissões configuradas para todos os usuários
+  - Criação de atalho no menu de aplicativos
+  - Comando 'cursor' disponível no terminal
+  - Atualização automática se já existir
+  - Opção de desinstalação completa
+  - [🔧 Executar Script](scripts/install_cursor_ide.sh)
+
 - **Ambiente de Terminal**: Scripts modulares para configuração completa
   - **Terminator**: Terminal padrão com configurações personalizadas
   - **Zsh + Oh My Zsh**: Shell avançado com tema e plugins
@@ -70,6 +80,21 @@ cd /caminho/para/workstation
 
 # Desinstalar Arduino IDE
 ./scripts/install_arduino_ide.sh --uninstall
+```
+
+#### Cursor IDE
+```bash
+# Instalar/Atualizar Cursor IDE
+./scripts/install_cursor_ide.sh
+
+# Forçar instalação inicial
+./scripts/install_cursor_ide.sh --install
+
+# Ver status da instalação
+./scripts/install_cursor_ide.sh --status
+
+# Desinstalar Cursor IDE
+./scripts/install_cursor_ide.sh --uninstall
 ```
 
 #### Ambiente de Terminal
