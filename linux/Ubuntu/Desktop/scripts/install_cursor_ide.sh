@@ -13,6 +13,7 @@
 # - Opção de desinstalação
 
 set -e
+set -o pipefail
 
 # =============================================================================
 # CONFIGURAÇÕES PERSONALIZÁVEIS - MODIFIQUE AQUI PARA CUSTOMIZAR
@@ -32,6 +33,17 @@ CONFIGURE_SYSTEM_PATH=true
 
 # Permitir acesso para todos os usuários
 ALLOW_ALL_USERS=true
+
+# Tipo de ícone do LobeHub (padrão: mono-light)
+# Opções: mono-dark, mono-light, text-dark, text-light
+# mono-light: ícone claro (recomendado para temas escuros)
+# mono-dark: ícone escuro (recomendado para temas claros)
+# Deixe vazio para usar ícone genérico
+CURSOR_ICON_TYPE="mono-light"
+
+# URL personalizada do ícone (opcional, sobrescreve CURSOR_ICON_TYPE)
+# Exemplo: CURSOR_ICON_URL="https://example.com/cursor-icon.png"
+CURSOR_ICON_URL=""
 
 # =============================================================================
 # FIM DAS CONFIGURAÇÕES PERSONALIZÁVEIS
@@ -99,13 +111,13 @@ create_directories() {
 
 # Função para obter informações da versão mais recente
 get_latest_version_info() {
-    log "Buscando versão mais recente do Cursor IDE..."
+    log "Buscando versão mais recente do Cursor IDE..." >&2
 
     # Buscar informações da API
     API_RESPONSE=$(curl -sL --connect-timeout 30 --max-time 60 "$CURSOR_API_URL")
 
     if [ $? -ne 0 ] || [ -z "$API_RESPONSE" ]; then
-        log "ERRO: Falha ao conectar com a API do Cursor"
+        log "ERRO: Falha ao conectar com a API do Cursor" >&2
         exit 1
     fi
 
@@ -114,17 +126,19 @@ get_latest_version_info() {
     LATEST_VERSION=$(echo "$API_RESPONSE" | jq -r '.version // .tag_name // "unknown"' 2>/dev/null)
 
     if [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]]; then
-        log "ERRO: Falha ao obter URL de download da API do Cursor"
+        log "ERRO: Falha ao obter URL de download da API do Cursor" >&2
         exit 1
     fi
 
     # Se não conseguir obter versão da API, usar URL como identificador
     if [[ -z "$LATEST_VERSION" || "$LATEST_VERSION" == "null" || "$LATEST_VERSION" == "unknown" ]]; then
-        LATEST_VERSION=$(echo "$DOWNLOAD_URL" | grep -o '/[^/]*\.AppImage' | sed 's|/||' | sed 's|\.AppImage||')
+        LATEST_VERSION=$(echo "$DOWNLOAD_URL" | grep -o 'Cursor-[^/]*\.AppImage' | sed 's|Cursor-||' | sed 's|\.AppImage||')
     fi
 
-    log "Versão mais recente encontrada: $LATEST_VERSION"
-    echo "$DOWNLOAD_URL"
+    log "Versão mais recente encontrada: $LATEST_VERSION" >&2
+
+    # Retornar tanto URL quanto versão (apenas para stdout)
+    echo "$DOWNLOAD_URL|$LATEST_VERSION"
 }
 
 # Função para verificar versão atual
@@ -145,6 +159,7 @@ download_and_install() {
     log "URL: $download_url"
 
     # Baixar para arquivo temporário
+    log "Iniciando download de $download_url"
     if curl -L --fail --progress-bar -o "$CURSOR_INSTALL_DIR/cursor.AppImage.tmp" "$download_url"; then
         if [ -s "$CURSOR_INSTALL_DIR/cursor.AppImage.tmp" ]; then
             # Backup da versão anterior se existir
@@ -164,6 +179,9 @@ download_and_install() {
             if [ "$ALLOW_ALL_USERS" = "true" ]; then
                 sudo chmod 755 "$CURSOR_INSTALL_DIR/cursor.AppImage"
                 sudo chown root:root "$CURSOR_INSTALL_DIR/cursor.AppImage"
+                # Configurar permissões do diretório também
+                sudo chmod 755 "$CURSOR_INSTALL_DIR"
+                sudo chown root:root "$CURSOR_INSTALL_DIR"
             fi
 
             log "✓ Cursor IDE instalado com sucesso!"
@@ -185,6 +203,59 @@ download_and_install() {
     fi
 }
 
+# Função para baixar ícone do LobeHub
+download_lobehub_icon() {
+    local icon_type="$1"
+    local size="${2:-64}"
+
+    log "Baixando ícone do Cursor do LobeHub ($icon_type)..."
+
+    # URLs dos ícones do LobeHub (URLs reais encontradas)
+    case "$icon_type" in
+        "mono-dark")
+            local url="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/cursor.png"
+            ;;
+        "mono-light")
+            local url="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/cursor.png"
+            ;;
+        "text-dark")
+            local url="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/cursor.png"
+            ;;
+        "text-light")
+            local url="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/cursor.png"
+            ;;
+        *)
+            log "Tipo de ícone inválido: $icon_type"
+            return 1
+            ;;
+    esac
+
+    # Baixar o ícone PNG diretamente
+    if curl -sL -o "/tmp/cursor_icon.png" "$url" 2>/dev/null; then
+        # Copiar o PNG baixado para o local final
+        sudo cp "/tmp/cursor_icon.png" "$ICON_FILE"
+        rm -f "/tmp/cursor_icon.png"
+        log "✓ Ícone baixado do LobeHub: $icon_type"
+        return 0
+    else
+        log "ERRO: Falha ao baixar ícone do LobeHub"
+        return 1
+    fi
+}
+
+# Função para criar ícone genérico como fallback
+create_generic_icon() {
+    log "Criando ícone genérico..."
+    sudo tee "$ICON_FILE" > /dev/null <<'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" fill="#007ACC" rx="8"/>
+  <text x="32" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">C</text>
+</svg>
+EOF
+    log "✓ Ícone genérico criado"
+}
+
 # Função para criar atalho de desktop
 create_desktop_entry() {
     if [ "$CREATE_DESKTOP_ENTRY" = "true" ]; then
@@ -193,22 +264,23 @@ create_desktop_entry() {
         # Baixar ícone se não existir
         if [ ! -f "$ICON_FILE" ]; then
             log "Baixando ícone do Cursor IDE..."
-            if curl -sL -o "$ICON_FILE" "https://cursor.sh/favicon.ico" 2>/dev/null; then
-                # Converter ICO para PNG se necessário
-                if command -v convert >/dev/null 2>&1; then
-                    convert "$ICON_FILE" "$ICON_FILE" 2>/dev/null || true
+
+            # Tentar baixar do LobeHub primeiro (ícones oficiais)
+            if [ -n "$CURSOR_ICON_TYPE" ] && download_lobehub_icon "$CURSOR_ICON_TYPE" 64; then
+                log "✓ Ícone oficial do Cursor baixado do LobeHub ($CURSOR_ICON_TYPE)"
+            elif [ -n "$CURSOR_ICON_URL" ]; then
+                # Fallback para URL personalizada
+                if curl -sL -o "/tmp/cursor_icon" "$CURSOR_ICON_URL" 2>/dev/null; then
+                    sudo cp "/tmp/cursor_icon" "$ICON_FILE"
+                    rm -f "/tmp/cursor_icon"
+                    log "✓ Ícone baixado de: $CURSOR_ICON_URL"
+                else
+                    log "AVISO: Falha ao baixar ícone de $CURSOR_ICON_URL. Usando ícone genérico."
+                    create_generic_icon
                 fi
-                log "✓ Ícone baixado"
             else
-                log "AVISO: Não foi possível baixar o ícone. Usando ícone genérico."
-                # Criar ícone SVG simples como fallback
-                sudo tee "$ICON_FILE" > /dev/null <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" fill="#007ACC" rx="8"/>
-  <text x="32" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">C</text>
-</svg>
-EOF
+                log "AVISO: Usando ícone genérico como fallback."
+                create_generic_icon
             fi
         fi
 
@@ -243,10 +315,37 @@ configure_system_path() {
     if [ "$CONFIGURE_SYSTEM_PATH" = "true" ]; then
         log "Configurando PATH do sistema..."
 
+        # Remover link existente se houver
+        if [ -L "$SYSTEM_BIN_LINK" ] || [ -f "$SYSTEM_BIN_LINK" ]; then
+            sudo rm -f "$SYSTEM_BIN_LINK"
+        fi
+
         # Criar link simbólico em /usr/local/bin
         sudo ln -sf "$CURSOR_INSTALL_DIR/cursor.AppImage" "$SYSTEM_BIN_LINK"
 
-        log "✓ PATH configurado. Cursor disponível como 'cursor' no terminal"
+        # Verificar se o link foi criado corretamente
+        if [ -L "$SYSTEM_BIN_LINK" ]; then
+            log "✓ PATH configurado. Cursor disponível como 'cursor' no terminal"
+        else
+            log "AVISO: Não foi possível criar o link simbólico em $SYSTEM_BIN_LINK"
+        fi
+    fi
+}
+
+# Função para corrigir permissões existentes
+fix_existing_permissions() {
+    if [ -f "$CURSOR_INSTALL_DIR/cursor.AppImage" ]; then
+        log "Corrigindo permissões do Cursor IDE existente..."
+
+        # Corrigir permissões do arquivo
+        sudo chmod 755 "$CURSOR_INSTALL_DIR/cursor.AppImage"
+        sudo chown root:root "$CURSOR_INSTALL_DIR/cursor.AppImage"
+
+        # Corrigir permissões do diretório
+        sudo chmod 755 "$CURSOR_INSTALL_DIR"
+        sudo chown root:root "$CURSOR_INSTALL_DIR"
+
+        log "✓ Permissões corrigidas"
     fi
 }
 
@@ -330,8 +429,9 @@ install_or_update() {
     create_directories
 
     # Obter informações da versão mais recente
-    local download_url=$(get_latest_version_info)
-    local latest_version=$(echo "$download_url" | grep -o '/[^/]*\.AppImage' | sed 's|/||' | sed 's|\.AppImage||')
+    local version_info=$(get_latest_version_info)
+    local download_url=$(echo "$version_info" | cut -d'|' -f1)
+    local latest_version=$(echo "$version_info" | cut -d'|' -f2)
 
     # Verificar versão atual
     local current_version=$(get_current_version)
@@ -395,6 +495,7 @@ show_help() {
     echo "  --update      Força atualização"
     echo "  --uninstall   Remove completamente o Cursor IDE"
     echo "  --status      Mostra status da instalação"
+    echo "  --fix         Corrige permissões e links de instalação existente"
     echo "  --help        Mostra esta ajuda"
     echo ""
     echo "Sem opções: Instala ou atualiza automaticamente"
@@ -415,6 +516,15 @@ case "${1:-}" in
         ;;
     --status)
         show_status
+        ;;
+    --fix)
+        log "=== Corrigindo Instalação Existente ==="
+        check_dependencies
+        fix_existing_permissions
+        create_desktop_entry
+        configure_system_path
+        verify_installation
+        exit 0
         ;;
     --help)
         show_help
