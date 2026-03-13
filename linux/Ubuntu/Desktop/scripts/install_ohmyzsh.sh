@@ -116,12 +116,12 @@ if [ -f "$ZSH_CONFIG_FILE" ]; then
 fi
 
 # Criar configuração otimizada do Oh My Zsh
-cat > "$ZSH_CONFIG_FILE" <<EOF
+cat > "$ZSH_CONFIG_FILE" <<'EOF'
 # Oh My Zsh Configuration
 export ZSH="\$HOME/.oh-my-zsh"
 
 # Tema (configurável no início do script)
-ZSH_THEME="jonathan"
+ZSH_THEME="__ZSH_THEME__"
 
 # Plugins (configuráveis no início do script)
 plugins=(
@@ -224,8 +224,8 @@ export EDITOR='nano'
 export VISUAL='nano'
 
 # Configurações de linguagem (configurável no início do script)
-export LANG=$ZSH_LANGUAGE
-export LC_ALL=$ZSH_LANGUAGE
+export LANG="__ZSH_LANGUAGE__"
+export LC_ALL="__ZSH_LANGUAGE__"
 
 # Configurações específicas do Kubernetes (baseado na configuração atual)
 export PATH="\${KREW_ROOT:-\$HOME/.krew}/bin:\$PATH"
@@ -242,6 +242,10 @@ if command -v kubectx >/dev/null 2>&1; then
     kubectx_mapping[context\\ with\\ spaces]="%F{red}spaces%f"
 fi
 EOF
+
+# Aplicar valores configuráveis sem expandir variáveis shell do conteúdo
+sed -i "s|__ZSH_THEME__|$ZSH_THEME|g" "$ZSH_CONFIG_FILE"
+sed -i "s|__ZSH_LANGUAGE__|$ZSH_LANGUAGE|g" "$ZSH_CONFIG_FILE"
 
 # Instalar plugins adicionais do Oh My Zsh
 log "Instalando plugins adicionais do Oh My Zsh..."
