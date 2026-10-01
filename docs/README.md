@@ -8,6 +8,7 @@ Este projeto tem como objetivo estruturar workstations de trabalho para diferent
 ```
 workstation/
 ├── docs/                    # Documentação geral
+├── macos/                   # Scripts e notas para macOS (Darwin)
 ├── linux/
 │   └── Ubuntu/
 │       ├── Server/          # Configurações para Ubuntu Server
@@ -15,6 +16,10 @@ workstation/
 ```
 
 ## Áreas de Trabalho
+
+### macOS
+- Scripts em `macos/scripts/` espelham, quando faz sentido, o fluxo Ubuntu Desktop (Cursor, Oh My Zsh, Kubernetes, k9s, Arduino).
+- O menu principal (`./menu.sh`) em **Darwin** mostra apenas o ramo **macOS**.
 
 ### Linux
 - **Ubuntu Server**: Configurações e scripts para servidores Ubuntu

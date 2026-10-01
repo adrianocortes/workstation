@@ -4,12 +4,17 @@
 Estruturar workstations de trabalho em diferentes áreas de atuação, fornecendo scripts, configurações e documentação para facilitar a configuração de ambientes de desenvolvimento e produção.
 
 ## Como Usar
-Execute o menu principal para acessar as opções disponíveis:
+O menu detecta o sistema operacional (**Linux**, **macOS** ou outro) e mostra apenas o que se aplica ao ambiente atual:
 ```bash
 ./menu.sh
 ```
 
 ## Opções Disponíveis
+
+### macOS
+- [Documentação macOS](macos/README.md)
+- Scripts em [macos/scripts/](macos/scripts/) (jq, Arduino, Cursor, iTerm2, Oh My Zsh, Kubernetes, k9s)
+- [Lista detalhada dos scripts](macos/scripts/README.md)
 
 ### Linux
 - **Ubuntu Desktop**: Scripts e configurações para desktops Ubuntu
@@ -29,8 +34,12 @@ Execute o menu principal para acessar as opções disponíveis:
 ## Estrutura do Projeto
 ```
 workstation/
-├── menu.sh                    # Menu principal interativo
+├── menu.sh                    # Menu principal (Linux vs macOS)
 ├── docs/                      # Documentação geral
+├── macos/
+│   ├── README.md
+│   ├── configs/               # Configurações opcionais (ex.: iTerm2)
+│   └── scripts/               # Instaladores macOS
 ├── linux/
 │   └── Ubuntu/
 │       ├── Server/            # Configurações Ubuntu Server
